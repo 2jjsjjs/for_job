@@ -1,0 +1,38 @@
+Constraint 조건  : 
+
+1. Range : 연속형으로 이루어진 열 3개 
+퇴사일자 > 근속연수 > 입사일자  
+ex ) age_btwn_joined_retirement = Range(low_column_name='age_started_working', middle_column_name='age_today', high_column_name='age_when_retiring')
+
+2. ScalarRange : 어떤 변수 정해서 low_value ~ high_value 사이에 위치하도록 한다. 
+ex ) age_btwn_18_100 = ScalarRange(column_name='age', low_value=18, high_value=100, strict_boundaries=False)
+
+3. FixedIncrements : 각 셀 값에 일정하게 값이 더해지는 원리 
+ex ) salary_divisble_by_500 = FixedIncrements(column_name='salary',increment_value=500)
+
+4. OneHotEncoding : 알아서 범주형 변수에 대해서 원핫인코딩 해주는 원리 
+ex ) job_category_constraint = OneHotEncoding(column_names=['full_time', 'part_time', 'contractor'])
+
+5. Positive and Negative : 재현데이터가 양수아니면 음수로 재현되도록 만드는 원리 
+ex ) age_positive = Positive(column_name='age')
+
+6. Scalarinequality : 특정 변수가 어떤 값이상 아니면 이하로 나오게 재현하는 원리 
+ex ) age_gt_18 = ScalarInequality(column_name='age' , relation='>=', value=18)
+
+7. Inequality : 어떤 연속형 변수가 다른 연속형 변수보다 더 작거나 크게 재현하게 만드는 원리 
+ex ) age_gt_age_when_joined_constraint = Inequality(low_column_name='age_when_joined',high_column_name='age')
+
+8. FixedCombinations : 정해진 열은 shuffle 안되도록 만드는 원리
+ex ) fixed_company_department_constraint = FixedCombinations(column_names=['company', 'department'])
+     
+9. unique : 고정되게 재현되지 않게 만드는 조건 예를 들면 id 값 
+ex ) unique_employee_id_company_constraint = Unique(column_names=['employee_id', 'company'])
+ 
+constraints = [
+unique_employee_id_company_constraint,
+fixed_company_department_constraint,
+age_gt_age_when_joined_constraint,
+job_category_constraint,
+age_btwn_18_100] 로 constraints 제약조건들을 묶고 
+
+model = CTGAN(constraints=constraints) 모델에서 정의할때 적용하는 방식으로 실시하면 된다.   
